@@ -1,0 +1,347 @@
+<!doctype html>
+<html>
+	<head>
+		
+		<title>Spotify UI Spoof, using flexbox</title>
+		
+		<style type="text/css">
+			
+			*
+			{
+				-webkit-user-select: none;
+				cursor: default;
+			}
+			
+			.electron-draggable {
+				-webkit-app-region: drag;
+			}
+			
+			.electron-non-draggable {
+				-webkit-app-region: no-drag;
+			}
+			
+			html, body
+			{
+				/* Disables elastic scrolling under OSX */
+				overflow: hidden;
+				
+				background: #fff;
+				margin: 0;
+				height: 100%;
+			}
+			
+			.scrollable {
+				overflow: auto;
+			}
+			
+			.scrollable > div
+			{
+				/* Required to make `overflow: auto` work on the parent */
+				height: 0;
+			}
+			
+			#outerContainer
+			{
+				width: 100%;
+				height: 100%;
+				display: flex;
+				flex-direction: column;
+			}
+			
+			#innerContainerTop
+			{
+				border-bottom: 1px solid #ccc;
+				min-height: min-content;
+				
+				/* Flex value with regard to this element within its parent */
+				flex: 0;
+				
+				/* Flex properties for this element to act as a flex container for its direct children */
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
+			
+			#innerContainerMiddle
+			{
+				min-height: min-content;
+				
+				/* Flex value with regard to this element within its parent */
+				flex: 1;
+				
+				/* Flex properties for this element to act as a flex container for its direct children */
+				display: flex;
+				flex-direction: row;
+			}
+			
+			#innerContainerBottom
+			{
+				border-top: 1px solid #ccc;
+				min-height: min-content;
+				
+				/* Flex value with regard to this element within its parent */
+				flex: 0;
+				
+				/* Flex properties for this element to act as a flex container for its direct children */
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+			}
+			
+			div.buttonGroup
+			{
+				padding: 1em;
+				
+				/* Flex value with regard to this element within its parent */
+				flex: 0;
+				
+				/* Flex properties for this element to act as a flex container for its direct children */
+				display: flex;
+				flex-direction: row;
+			}
+			
+			/* Both spacer and expander divs fill available space leftover by their `flex: 0` siblings */
+			div.spacer, div.expander {
+				flex: 1;
+			}
+			
+			div.expander {
+				padding: 1em;
+			}
+			
+			#sidebar
+			{
+				border-right: 1px solid #ccc;
+				min-width: max-content;
+				
+				/* Flex value with regard to this element within its parent */
+				flex: 0;
+				
+				/* Flex properties for this element to act as a flex container for its direct children */
+				display: flex;
+				flex-direction: column;
+			}
+			
+			#nav {
+				flex: 1;
+			}
+			
+			#albumArt
+			{
+				border-top: 1px solid #ccc;
+				flex: 0;
+				
+				height: 8em;
+				line-height: 8em;
+				text-align: center;
+			}
+			
+			#content
+			{
+				/* Flex value with regard to this element within its parent */
+				flex: 1;
+				
+				/* Flex properties for this element to act as a flex container for its direct children */
+				display: flex;
+				flex-direction: row;
+				align-items: stretch;
+				align-content: stretch;
+			}
+			
+			#content iframe
+			{
+				flex: 1;
+				border: none;
+			}
+			
+			#content .contentArea {
+				padding: 1em;
+			}
+			
+			.btn
+			{
+				border: 1px solid #aaa;
+				font-weight: bold;
+			}
+			
+			.btn:hover
+			{
+				background-color: #000;
+				color: #fff;
+			}
+			
+			.btn + .btn {
+				margin-left: 1em;
+			}
+			
+			.bar
+			{
+				width: 100%;
+				background-color: #000;
+				color: #fff;
+			}
+			
+			#playbackControls .btn {
+				padding: 1em;
+			}
+			
+			.navGroup {
+				padding: 2em;
+			}
+			
+		</style>
+		
+		<script type="text/javascript">
+			
+			function navigatePage(page)
+			{
+				if (document.getElementById('contentFrame').getAttribute('src') != page) {
+					document.getElementById('contentFrame').setAttribute('src', page);
+				}
+			}
+			
+			window.onload = function()
+			{
+				var remote = require('electron').remote;
+				window.browserWindow = remote.getCurrentWindow();
+				
+				document.getElementById('clsBtn').addEventListener('click', function() { window.browserWindow.close(); });
+				document.getElementById('minBtn').addEventListener('click', function() { window.browserWindow.minimize(); });
+				document.getElementById('maxBtn').addEventListener('click', function()
+				{
+					if (window.browserWindow.isMaximized()) {
+						window.browserWindow.unmaximize();
+					}
+					else {
+						window.browserWindow.maximize();
+					}
+				});
+				
+				document.getElementById('btnPage1').addEventListener('click', function() { navigatePage('page1.html'); });
+				document.getElementById('btnPage2').addEventListener('click', function() { navigatePage('page2.html'); });
+				
+				document.getElementById('backBtn').addEventListener('click', function() { document.getElementById('contentFrame').contentWindow.history.back(); });
+				document.getElementById('forwardBtn').addEventListener('click', function() { document.getElementById('contentFrame').contentWindow.history.forward(); });
+			}
+			
+		</script>
+		
+	</head>
+	
+	<body>
+		
+		<div id="outerContainer">
+			
+			<div id="innerContainerTop" class="electron-draggable">
+				
+				<div class="buttonGroup">
+					<div class="btn electron-non-draggable" id="clsBtn">X</div>
+					<div class="btn electron-non-draggable" id="minBtn">_</div>
+					<div class="btn electron-non-draggable" id="maxBtn">[]</div>
+				</div>
+				
+				<div class="buttonGroup">
+					<div class="btn electron-non-draggable" id="backBtn">&lt;</div>
+					<div class="btn electron-non-draggable" id="forwardBtn">&gt;</div>
+				</div>
+				
+				<div class="buttonGroup">
+					<div class="btn electron-non-draggable">Search</div>
+				</div>
+				
+				<div class="spacer">
+					
+				</div>
+				
+				<div class="buttonGroup">
+					<div class="btn electron-non-draggable">Notifications</div>
+					<div class="btn electron-non-draggable">Messages</div>
+					<div class="btn electron-non-draggable">User</div>
+					<div class="btn electron-non-draggable">Menu</div>
+				</div>
+				
+			</div>
+			
+			<div id="innerContainerMiddle">
+				
+				<div id="sidebar">
+					
+					<div id="nav" class="scrollable">
+						<div>
+							
+							<div class="navGroup">
+								
+								<div class="btn" id="btnPage1">Page&nbsp;1</div>
+								<div class="btn" id="btnPage2">Page&nbsp;2</div>
+								
+							</div>
+							
+							<div class="navGroup">
+								NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>
+								NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>
+								NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>
+								NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>
+								NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM<br>NAV&nbsp;ITEM
+							</div>
+							
+						</div>
+					</div>
+					
+					<div id="albumArt">
+						
+						ALBUM ART
+						
+					</div>
+				</div>
+				
+				<!--
+				<div id="content" class="scrollable">
+					<div>
+						
+						<div class="contentArea">
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+							content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content
+						</div>
+						
+					</div>
+				</div>
+				-->
+				
+				<div id="content">
+					<iframe id="contentFrame" src="page1.html"></iframe>
+				</div>
+				
+				
+			</div>
+			
+			<div id="innerContainerBottom">
+				
+				<div class="buttonGroup" id="playbackControls">
+					<div class="btn">Prev</div>
+					<div class="btn">Play</div>
+					<div class="btn">Next</div>
+				</div>
+				
+				<div class="expander">
+					
+					<div class="bar">Scrubbing Controls</div>
+					
+				</div>
+				
+				<div class="buttonGroup">
+					<div class="btn">Remaining&nbsp;Controls</div>
+				</div>
+				
+			</div>
+			
+		</div>
+		
+	</body>
+</html>

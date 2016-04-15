@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Child Window</title>
+		
+		<style type="text/css">
+			
+			.btn
+			{
+				border: 1px solid #aaa;
+				font-weight: bold;
+			}
+			
+			.btn:hover
+			{
+				background-color: #000;
+				color: #fff;
+			}
+			
+		</style>
+		
+		<script type="text/javascript">
+			
+			var require          = parent.require; 
+			var remote           = require('electron').remote;
+			window.browserWindow = remote.getCurrentWindow();
+			
+			window.onload = function()
+			{
+				document.getElementById('btnClose').addEventListener('click', function() {
+					window.browserWindow.close();
+				});
+			}
+			
+		</script>
+	</head>
+	
+	<body>
+		
+		<h1>Child Window</h1>
+		
+		<p><div class="btn" id="btnClose">Close this window</div></p>
+		
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content
+		
+	</body>
+</html>

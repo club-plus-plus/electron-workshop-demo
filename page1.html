@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Page 1</title>
+		
+		<style type="text/css">
+			
+			.btn
+			{
+				border: 1px solid #aaa;
+				font-weight: bold;
+			}
+			
+			.btn:hover
+			{
+				background-color: #000;
+				color: #fff;
+			}
+			
+		</style>
+		
+		<script type="text/javascript">
+			
+			var require          = parent.require; 
+			var glob             = require('glob');
+			var remote           = require('electron').remote;
+			var ipc              = require('electron').ipcRenderer;
+			var BrowserWindow    = remote.require('electron').BrowserWindow;
+			window.browserWindow = remote.getCurrentWindow();
+			
+			var execFile = require('child_process').execFile;
+			var exec     = require('child_process').exec;
+			
+			window.onload = function()
+			{
+				document.getElementById('btnGlob').addEventListener('click', function()
+				{
+					glob(parent.__dirname + "/*.js", function (er, files) {
+					  console.log(files);
+					})
+				});
+				
+				document.getElementById('btnChildProcess').addEventListener('click', function()
+				{
+					exec('ls /', function(error, stdout, stderr)
+					{
+					    console.log(`stdout: ${stdout}`);
+					    console.log(`stderr: ${stderr}`);
+						
+					    if (error !== null) {
+					    	console.log(`exec error: ${error}`);
+					    }
+					});
+				});
+				
+				document.getElementById('btnPage2').addEventListener('click', function() {
+					parent.window.navigatePage('page2.html');
+				});
+				
+				document.getElementById('btnGetPref').addEventListener('click', function() {
+					parent.window.alert('PREF VALUE: ' + ipc.sendSync('get-pref', 'key1'));
+				});
+				
+				document.getElementById('btnSetPref').addEventListener('click', function() {
+					alert( ipc.send('set-pref', {'key':'key1', 'value':document.getElementById('prefVal').value} ) );
+				});
+				
+				document.getElementById('btnOpenWindow').addEventListener('click', function()
+				{
+					var childWindow = new BrowserWindow({
+						'width':      620,
+						'height':     500,
+						'show':       true,
+						'fullscreen': false,
+						'resizable':  true
+					});
+					childWindow.loadURL('file://' + parent.__dirname + '/config.html');
+				});
+			}
+			
+		</script>
+	</head>
+	
+	<body>
+		
+		<h1>Page 1</h1>
+		
+		<p><div class="btn" id="btnPage2">Go to Page 2</div></p>
+		
+		<p><div class="btn" id="btnOpenWindow">Open a child window</div></p>
+		
+		<p><div class="btn" id="btnGetPref">Get pref value for key "key1"</div></p>
+		
+		<p><div class="btn" id="btnSetPref">Set pref value for key "key1" to:</div><input type="text" id="prefVal"></p>
+		
+		<p><div class="btn" id="btnChildProcess">Run child process</div></p>
+		
+		<p><div class="btn" id="btnGlob">OH MY GLOB!</div></p>
+		
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>
+		content<br>content<br>content<br>content<br>content<br>content<br>content<br>content<br>content
+		
+	</body>
+</html>
